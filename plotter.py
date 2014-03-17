@@ -94,6 +94,10 @@ yaw = 0
 for i in attitude.get_artists():
     ax.add_artist(i)
 
+plt.show()
+
+
+
 port = None
 import serial
 try:
@@ -102,12 +106,16 @@ except:
     pass
 
 
-buffer = "control ->       687.0000      713.0000      692.0000 control ->       687.0000      713.0000      692.0000 control ->       687.0000      713.0000      692.0000 control -> "
-#buffer = ""
+#buffer = "control ->       687.0000      713.0000      692.0000 control ->       687.0000      713.0000      692.0000 control ->       687.0000      713.0000      692.0000 control -> "
+buffer = ""
+
+
+
 
 def update_attitude():
     attitude.set_attitude([roll,pitch,yaw])
     plt.draw()
+    plt.pause(0.0001)
 
 
 while True:
@@ -116,25 +124,29 @@ while True:
             buffer = buffer + port.read(5)
             time.sleep(0.001)
     splited = buffer.split("control ->")
-    for substring in splited:
-        if len(substring) > 30:
-            numbers = substring.split("    ")
-            converted_numbers = []
-            for number in numbers[1:]:
-                converted_numbers.append(float(number))
-            print converted_numbers
-            roll, pitch, yaw = converted_numbers
-            update_attitude()
+    try:
+        for substring in splited:
+            if len(substring) > 30:
+                numbers = substring.split("    ")
+                converted_numbers = []
+                for number in numbers[1:]:
+                    converted_numbers.append(float(number))
+                print converted_numbers
+                roll, pitch, yaw = converted_numbers
+                update_attitude()
+    except:
+        pass
     buffer = splited[-1]
 
 
 
-
-
-
-while True:
-    roll+=1.0/300
-    yaw+=1.0/300
-
-
-
+#
+#
+#
+# while True:
+#     roll+=1.0/300
+#     yaw+=1.0/300
+#     update_attitude()
+#
+#
+#
